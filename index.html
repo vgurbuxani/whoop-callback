@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Whoop OAuth Callback</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; max-width: 600px; margin: 100px auto; padding: 20px; color: #333; }
+    h1 { color: #1a1a1a; }
+    .code { background: #f5f5f5; padding: 12px; border-radius: 6px; font-family: monospace; word-break: break-all; }
+    .ok { color: #16a34a; }
+    .err { color: #dc2626; }
+  </style>
+</head>
+<body>
+  <h1 id="status">Whoop OAuth Callback</h1>
+  <p id="message">Processing authorization...</p>
+  <div id="details"></div>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+    const state = params.get('state');
+    const error = params.get('error');
+    const status = document.getElementById('status');
+    const message = document.getElementById('message');
+    const details = document.getElementById('details');
+
+    if (error) {
+      status.textContent = 'Authorization Failed';
+      status.className = 'err';
+      message.textContent = 'Whoop returned an error: ' + error;
+      details.innerHTML = '<p>Description: ' + (params.get('error_description') || 'unknown') + '</p>';
+    } else if (code) {
+      status.textContent = '✓ Authorization Successful';
+      status.className = 'ok';
+      message.textContent = 'Forwarding code to local script...';
+      // Try local redirect first
+      const localUrl = 'http://localhost:8765/callback?code=' + encodeURIComponent(code) + '&state=' + encodeURIComponent(state || '');
+      details.innerHTML = '<p>If your terminal script is running, you will be redirected automatically. Otherwise, copy this code and paste it back to the terminal:</p>' +
+                          '<div class="code">' + code + '</div>' +
+                          '<p style="margin-top: 20px;"><a href="' + localUrl + '">Click here to forward to localhost manually</a></p>';
+      // Auto-redirect attempt
+      setTimeout(() => { window.location.href = localUrl; }, 500);
+    } else {
+      status.textContent = 'No Code Received';
+      status.className = 'err';
+      message.textContent = 'No authorization code in URL. The OAuth flow may have failed.';
+    }
+  </script>
+</body>
+</html>
