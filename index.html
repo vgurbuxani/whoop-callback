@@ -34,7 +34,7 @@
       status.className = 'ok';
       message.textContent = 'Forwarding code to local script...';
       // Try local redirect first
-      const localUrl = 'http://localhost:8765/callback?code=' + encodeURIComponent(code) + '&state=' + encodeURIComponent(state || '');
+      const localUrl = 'http://localhost:8910/callback?code=' + encodeURIComponent(code) + '&state=' + encodeURIComponent(state || '');
       details.innerHTML = '<p>If your terminal script is running, you will be redirected automatically. Otherwise, copy this code and paste it back to the terminal:</p>' +
                           '<div class="code">' + code + '</div>' +
                           '<p style="margin-top: 20px;"><a href="' + localUrl + '">Click here to forward to localhost manually</a></p>';
